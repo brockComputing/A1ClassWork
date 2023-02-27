@@ -9,31 +9,55 @@ namespace A1ClassWork
 {
     internal class Program
     {
+        class Student
+        {
+            public string FirstName { get; set; }
+            public string SurName { get; set; }
+            public bool DepositPaid { get; set; }
+            public DateTime Dob { get; set; }
+            public int Attendance { get; set; }
+
+        }
         static void Main(string[] args)
         {
+            Random rand = new Random();
+            Student s1 = new Student();
+            s1.FirstName = "dave";
+            s1.Attendance = 99;
 
-            string choice = "";
-            while (choice != "9")
+            Student s2 = new Student();
+            s2.FirstName = "fred";
+
+            List<Student> studentList = new List<Student>();
+            studentList.Add(s1); 
+            studentList.Add(s2);
+            studentList.Add(new Student { FirstName = "Anne", Attendance = 12});
+            foreach (var item in studentList)
             {
-                DisplayMenu();
-                choice = Console.ReadLine();
-                if (choice == "1")
-                {
-                    DisplayFile();
-                }
-                if (choice == "2")
-                {
-                    CountChar();
-                }
-                if (choice == "3")
-                {
-                    Encrypt();
-                }
-                if (choice == "4")
-                {
-                    Decrypt();
-                }
+                Console.WriteLine($"the name is {item.FirstName}- {item.Attendance}");
             }
+
+            for (int i = 0; i < studentList.Count; i++)
+            {
+                Console.WriteLine($"the name is {studentList[i].FirstName}");
+            }
+
+            int[] numbers = new int[10]; // static data structure
+            List<int> numberList= new List<int>() { 23,3,44,55,66,7878}; // dynamic data structure
+            numberList.Add(1);
+            numberList.Add(23);
+            numberList.Add(35);
+
+            numberList[2] = 44;
+            numberList.RemoveAt(1);
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                Console.WriteLine(numberList[i]);
+            }
+
+
+
+            Console.ReadLine();
 
 
         }
