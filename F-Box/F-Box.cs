@@ -43,14 +43,16 @@ namespace OandX
 
         private static void DisplayCountries(List<Country> countrylist)
         {
-            
+
         }
 
         private static void AddCountry(List<Country> countrylist)
         {
-            string cname, 
+            string cname, currencyName;
+            double exRate;
         }
     }
+}
 
 
 
