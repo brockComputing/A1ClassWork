@@ -21,19 +21,60 @@ namespace A1ClassWork
                 {
                     DisplayFile();
                 }
+                if (choice == "2")
+                {
+                    CharCount();
+                }
             }
 
 
         }
 
+
+        private static void CharCount()
+        {
+            string currentLine;
+            int count = 0;
+            char theCharTolookfor = ' ';
+            Console.WriteLine("Enter the char to count in the file");
+            theCharTolookfor = Convert.ToChar(Console.ReadLine());
+
+            StreamReader currentFile = new StreamReader("film.txt");
+            while (!currentFile.EndOfStream)
+            {
+                currentLine = currentFile.ReadLine();
+                for (int i = 0; i < currentLine.Length; i++)
+                {
+                    if (currentLine[i] == theCharTolookfor)
+                    {
+                        count++;
+                    }
+                }
+            }
+            Console.WriteLine($"{theCharTolookfor} occurs {count} times ");
+            currentFile.Close();
+            Console.ReadLine();
+        }
+
         private static void DisplayFile()
         {
-            throw new NotImplementedException();
+            string currentLine;
+            StreamReader currentFile = new StreamReader("film.txt");
+            while (!currentFile.EndOfStream)
+            {
+                currentLine = currentFile.ReadLine();
+                Console.WriteLine(currentLine);
+            }
+            currentFile.Close();
+            Console.ReadLine();
         }
 
         private static void DisplayMenu()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("1. to display the file");
+            Console.WriteLine("2. char count");
+            Console.WriteLine("3. to encrypt the file");
+            Console.WriteLine("4. to decrypt the file");
         }
     }
 }

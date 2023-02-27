@@ -27,13 +27,117 @@ namespace Sorting_Assignment_done
                 {
                     CountChar();
                 }
+                else if (choice == "3")
+                {
+                    //Encrypt();
+                    EorD(1);
+                }
+                else if (choice == "4")
+                {
+                    //Decrypt();
+                    EorD(-1);
+                }
+                else if (choice == "5")
+                {
+                    Vernam();
+                }
                 else if (choice == "8")
                 {
-                    CountAllChars();
+                    CountChar();
                 }
             }
 
 
+        }
+
+        private static void Vernam()
+        {
+            string OTP = "sdfkljgfjdgfjodigjoerjia'gjjuhgdfkghdfsgklgflsdjkg;ljfg'sj'djg";
+            string thefile = File.ReadAllText("film.txt");
+            string newText = "";
+            int count = 0;
+            foreach (var item in thefile)
+            {
+                int asciiThefile = Convert.ToInt32(item);
+                int asciiTheOTP = Convert.ToInt32(OTP[count]);
+                char newChar = Convert.ToChar(asciiThefile ^ asciiTheOTP);
+                newText = newText + newChar;
+            }
+            File.WriteAllText("film.txt", newText);
+        }
+
+        static void EorD(int key)
+        {
+            string currentline;
+            StreamReader filmFile = new StreamReader("film.txt");
+            StreamWriter tempFile = new StreamWriter("temp.txt");
+            while (!filmFile.EndOfStream)
+            {
+                string newString = "";
+                string lineoftext = currentline = filmFile.ReadLine();
+                foreach (char theLetter in lineoftext)
+                {
+                    int ascii = Convert.ToInt32(theLetter);
+                    ascii = ascii + key;
+                    char newchar = Convert.ToChar(ascii);
+                    newString = newString + newchar;
+
+                }
+                tempFile.WriteLine(newString);
+            }
+            tempFile.Close();
+            filmFile.Close();
+            File.Delete("film.txt");
+            File.Move("temp.txt", "film.txt");
+        }
+        private static void Decrypt()
+        {
+            string currentline;
+            StreamReader filmFile = new StreamReader("film.txt");
+            StreamWriter tempFile = new StreamWriter("temp.txt");
+            while (!filmFile.EndOfStream)
+            {
+                string newString = "";
+                string lineoftext = currentline = filmFile.ReadLine();
+                foreach (char theLetter in lineoftext)
+                {
+                    int ascii = Convert.ToInt32(theLetter);
+                    ascii = ascii - 1;
+                    char newchar = Convert.ToChar(ascii);
+                    newString = newString + newchar;
+
+                }
+                tempFile.WriteLine(newString);
+            }
+            tempFile.Close();
+            filmFile.Close();
+            File.Delete("film.txt");
+            File.Move("temp.txt", "film.txt");
+        }
+
+        private static void Encrypt()
+        {
+            string currentline;
+            StreamReader filmFile = new StreamReader("film.txt");
+            StreamWriter tempFile = new StreamWriter("temp.txt");
+            while (!filmFile.EndOfStream)
+            {
+                string newString = "";
+                string lineoftext = currentline = filmFile.ReadLine();
+                foreach (char theLetter in lineoftext)
+                {
+                    int ascii = Convert.ToInt32(theLetter);
+                    ascii = ascii + 1;
+                    char newchar = Convert.ToChar(ascii);
+                    newString = newString + newchar;
+
+                }
+                tempFile.WriteLine(newString);
+            }
+            tempFile.Close();
+            filmFile.Close();
+            File.Delete("film.txt");
+            File.Move("temp.txt", "film.txt");
         }
 
         private static void CountAllChars()
@@ -97,7 +201,6 @@ namespace Sorting_Assignment_done
                 Console.WriteLine(currentLine);
             }
             currentFile.Close();
-            Console.ReadLine();
 
         }
 
@@ -107,6 +210,7 @@ namespace Sorting_Assignment_done
             Console.WriteLine("2. char count");
             Console.WriteLine("3. to encrypt the file");
             Console.WriteLine("4. to decrypt the file");
+            Console.WriteLine("5. Vernam");
         }
     }
 }
