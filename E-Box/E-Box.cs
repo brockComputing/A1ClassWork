@@ -10,44 +10,44 @@ namespace Sorting_Assignment_done
 {
     class Program
     {
+        class Student
+        {
+            public string FirstName { get; set; }
+            public string SurName { get; set; }
+            public bool DepositPaid { get; set; }
+            public DateTime Dob { get; set; }
+        }
+
 
         static void Main(string[] args)
         {
+            List<Student> studentList = new List<Student>();
 
-            string choice = "";
-            while (choice != "9")
+
+
+
+
+            Student s1  = new Student();
+            s1.SurName = "jones";
+            s1.FirstName = "Bryn";
+            studentList.Add(s1);
+            Student s2 = new Student();
+            s2.SurName = "smith";
+            studentList.Add(s2);
+            studentList.Add(new Student { SurName = "Davis", DepositPaid = true });
+            foreach (var item in studentList)
             {
-                DisplayMenu();
-                choice = Console.ReadLine();
-                if (choice == "1")
-                {
-                    DisplayFile();
-                }
-                else if (choice == "2")
-                {
-                    CountChar();
-                }
-                else if (choice == "3")
-                {
-                    //Encrypt();
-                    EorD(1);
-                }
-                else if (choice == "4")
-                {
-                    //Decrypt();
-                    EorD(-1);
-                }
-                else if (choice == "5")
-                {
-                    Vernam();
-                }
-                else if (choice == "8")
-                {
-                    CountChar();
-                }
+                Console.WriteLine($"surname {item.SurName}");
+            }
+            for (int i = 0; i < studentList.Count; i++)
+            {
+                Console.WriteLine($"Surname {studentList[i].SurName}");
             }
 
+           
 
+            
+            Console.ReadLine();
         }
 
         private static void Vernam()
