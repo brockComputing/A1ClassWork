@@ -10,207 +10,82 @@ namespace Sorting_Assignment_done
 {
     class Program
     {
-        class Student
-        {
-            public string FirstName { get; set; }
-            public string SurName { get; set; }
-            public bool DepositPaid { get; set; }
-            public DateTime Dob { get; set; }
-        }
+        
 
+        class Country
+        {
+            public string CountryName { get; set; }
+            public string CurrencyName { get; set; }
+            public double ExchangeRate { get; set; }
+        }
+        
 
         static void Main(string[] args)
         {
-            List<Student> studentList = new List<Student>();
-
-
-
-
-
-            Student s1  = new Student();
-            s1.SurName = "jones";
-            s1.FirstName = "Bryn";
-            studentList.Add(s1);
-            Student s2 = new Student();
-            s2.SurName = "smith";
-            studentList.Add(s2);
-            studentList.Add(new Student { SurName = "Davis", DepositPaid = true });
-            foreach (var item in studentList)
+            List<Country> countrylist = new List<Country>();
+            string choice = "";
+            while (choice != "9")
             {
-                Console.WriteLine($"surname {item.SurName}");
-            }
-            for (int i = 0; i < studentList.Count; i++)
-            {
-                Console.WriteLine($"Surname {studentList[i].SurName}");
-            }
-
-           
-
-            
-            Console.ReadLine();
-        }
-
-        private static void Vernam()
-        {
-            string OTP = "sdfkljgfjdgfjodigjoerjia'gjjuhgdfkghdfsgklgflsdjkg;ljfg'sj'djg";
-            string thefile = File.ReadAllText("film.txt");
-            string newText = "";
-            int count = 0;
-            foreach (var item in thefile)
-            {
-                int asciiThefile = Convert.ToInt32(item);
-                int asciiTheOTP = Convert.ToInt32(OTP[count]);
-                char newChar = Convert.ToChar(asciiThefile ^ asciiTheOTP);
-                newText = newText + newChar;
-            }
-            File.WriteAllText("film.txt", newText);
-        }
-
-        static void EorD(int key)
-        {
-            string currentline;
-            StreamReader filmFile = new StreamReader("film.txt");
-            StreamWriter tempFile = new StreamWriter("temp.txt");
-            while (!filmFile.EndOfStream)
-            {
-                string newString = "";
-                string lineoftext = currentline = filmFile.ReadLine();
-                foreach (char theLetter in lineoftext)
+                DisplayMenu();
+                choice = Console.ReadLine();
+                if (choice == "1")
                 {
-                    int ascii = Convert.ToInt32(theLetter);
-                    ascii = ascii + key;
-                    char newchar = Convert.ToChar(ascii);
-                    newString = newString + newchar;
-
+                    AddCountry(countrylist);
                 }
-                tempFile.WriteLine(newString);
-            }
-            tempFile.Close();
-            filmFile.Close();
-            File.Delete("film.txt");
-            File.Move("temp.txt", "film.txt");
-        }
-        private static void Decrypt()
-        {
-            string currentline;
-            StreamReader filmFile = new StreamReader("film.txt");
-            StreamWriter tempFile = new StreamWriter("temp.txt");
-            while (!filmFile.EndOfStream)
-            {
-                string newString = "";
-                string lineoftext = currentline = filmFile.ReadLine();
-                foreach (char theLetter in lineoftext)
+                if (choice == "2")
                 {
-                    int ascii = Convert.ToInt32(theLetter);
-                    ascii = ascii - 1;
-                    char newchar = Convert.ToChar(ascii);
-                    newString = newString + newchar;
-
+                    DisplayCountries(countrylist);
                 }
-                tempFile.WriteLine(newString);
-            }
-            tempFile.Close();
-            filmFile.Close();
-            File.Delete("film.txt");
-            File.Move("temp.txt", "film.txt");
-        }
-
-        private static void Encrypt()
-        {
-            string currentline;
-            StreamReader filmFile = new StreamReader("film.txt");
-            StreamWriter tempFile = new StreamWriter("temp.txt");
-            while (!filmFile.EndOfStream)
-            {
-                string newString = "";
-                string lineoftext = currentline = filmFile.ReadLine();
-                foreach (char theLetter in lineoftext)
+                if (choice == "3")
                 {
-                    int ascii = Convert.ToInt32(theLetter);
-                    ascii = ascii + 1;
-                    char newchar = Convert.ToChar(ascii);
-                    newString = newString + newchar;
-
-                }
-                tempFile.WriteLine(newString);
-            }
-            tempFile.Close();
-            filmFile.Close();
-            File.Delete("film.txt");
-            File.Move("temp.txt", "film.txt");
-        }
-
-        private static void CountAllChars()
-        {
-            for (int i = 65; i < 92; i++)
-            {
-                Console.WriteLine($"");
-            }
-        }
-
-        static int CountChar(char letterToSeachfor)
-        {
-            int count = 0;
-            string currentLine;
-            StreamReader currentFile = new StreamReader("film.txt");
-            while (!currentFile.EndOfStream)
-            {
-                currentLine = currentFile.ReadLine();
-                for (int i = 0; i < currentLine.Length; i++)
-                {
-                    if (letterToSeachfor == currentLine[i])
-                    {
-                        count++;
-                    }
+                    FindExchangeRate(countrylist);
                 }
             }
-            currentFile.Close();
-            return count;
+
         }
 
-        private static void CountChar()
+        private static void FindExchangeRate(List<Country> countrylist)
         {
-            Console.WriteLine("Enter a letter to search for");
-            char letterToSeachfor = Convert.ToChar(Console.ReadLine());
-            int count = 0;
-            string currentLine;
-            StreamReader currentFile = new StreamReader("film.txt");
-            while (!currentFile.EndOfStream)
+            Console.WriteLine("enter a country name ");
+            string countryName = Console.ReadLine();
+            foreach (var item in countrylist)
             {
-                currentLine = currentFile.ReadLine();
-                for (int i = 0; i < currentLine.Length; i++)
+                if (countryName == item.CountryName)
                 {
-                    if (letterToSeachfor == currentLine[i])
-                    {
-                        count++;
-                    }
+                    Console.WriteLine($"The exchange rate is {item.ExchangeRate}" );
                 }
             }
-            Console.WriteLine($"{letterToSeachfor} occurs {count} times");
-            currentFile.Close();
-            Console.ReadLine();
         }
 
-        private static void DisplayFile()
+        private static void DisplayCountries(List<Country> countrylist)
         {
-            string currentLine;
-            StreamReader currentFile = new StreamReader("film.txt");
-            while (!currentFile.EndOfStream)
+            foreach (var item in countrylist)
             {
-                currentLine = currentFile.ReadLine();
-                Console.WriteLine(currentLine);
+                Console.WriteLine($"{item.CountryName}  {item.CurrencyName}  {item.ExchangeRate}");
             }
-            currentFile.Close();
+        }
 
+        private static void AddCountry(List<Country> countrylist)
+        {
+            Console.WriteLine("Enter the country name");
+            string countryName = Console.ReadLine();
+            Console.WriteLine("Enter the currency name:");
+            string currencyName = Console.ReadLine();
+            Console.WriteLine("Enter the exchange rate");
+            double exchangeRate = Convert.ToDouble(Console.ReadLine());
+            Country aCountry = new Country();
+            aCountry.CountryName = countryName; 
+            aCountry.CurrencyName = currencyName;
+            aCountry.ExchangeRate = exchangeRate;
+            countrylist.Add(aCountry);
+            //countrylist.Add(new Country {CountryName = countryName, CurrencyName = currencyName, ExchangeRate = exchangeRate}); 
         }
 
         private static void DisplayMenu()
         {
-            Console.WriteLine("1. to display the file");
-            Console.WriteLine("2. char count");
-            Console.WriteLine("3. to encrypt the file");
-            Console.WriteLine("4. to decrypt the file");
-            Console.WriteLine("5. Vernam");
+            Console.WriteLine("1. Add country");
+            Console.WriteLine("2. Display all countrys");
+            Console.WriteLine("3. Find a countries exchange rate");
         }
     }
 }
