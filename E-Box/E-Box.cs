@@ -3,92 +3,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using System.IO;
 
-namespace Sorting_Assignment_done
+namespace isbn13Checkdigit
 {
     class Program
     {
-        
-
-        class Country
-        {
-            public string CountryName { get; set; }
-            public string CurrencyName { get; set; }
-            public double ExchangeRate { get; set; }
-        }
-        
-
         static void Main(string[] args)
         {
-            List<Country> countrylist = new List<Country>();
+            string anotherGO = "Y";
+            string theBarCode = "";
             string choice = "";
-            while (choice != "9")
+            while (anotherGO.ToUpper() == "Y")
             {
-                DisplayMenu();
+                theBarCode = GetCode();
+                Console.WriteLine("1. to add a check digit to the number ");
+                Console.WriteLine("2. to check if a number is valid (check digit is included) ");
                 choice = Console.ReadLine();
                 if (choice == "1")
                 {
-                    AddCountry(countrylist);
+                    theBarCode = theBarCode + CalcCheckdigit(theBarCode);
+                    Console.WriteLine("The code with the digit added is " + theBarCode);
                 }
-                if (choice == "2")
+                else
                 {
-                    DisplayCountries(countrylist);
+                    if (ValidCode(theBarCode))
+                    {
+                        Console.WriteLine("the code enterd is VALID");
+                    }
+                    else
+                    {
+                        Console.WriteLine("the code enterd is INVALID");
+                    }
                 }
-                if (choice == "3")
-                {
-                    FindExchangeRate(countrylist);
-                }
-            }
-
-        }
-
-        private static void FindExchangeRate(List<Country> countrylist)
-        {
-            Console.WriteLine("enter a country name ");
-            string countryName = Console.ReadLine();
-            foreach (var item in countrylist)
-            {
-                if (countryName == item.CountryName)
-                {
-                    Console.WriteLine($"The exchange rate is {item.ExchangeRate}" );
-                }
+                Console.WriteLine("Another go? (y/n)");
+                anotherGO = Console.ReadLine();
             }
         }
 
-        private static void DisplayCountries(List<Country> countrylist)
+        private static bool ValidCode(string theBarCode)
         {
-            foreach (var item in countrylist)
-            {
-                Console.WriteLine($"{item.CountryName}  {item.CurrencyName}  {item.ExchangeRate}");
-            }
+            // get the last digit from theBarCode
+            // create a string called tempBarCode from the theBarCode that does not have the last digit (use substring)
+            // calculate the check digit for tempBarCode 
+            // compare the check digits and return true if the same otherwise false
+
+            return false;
         }
 
-        private static void AddCountry(List<Country> countrylist)
+        private static int CalcCheckdigit(string theBarCode)
         {
-            Console.WriteLine("Enter the country name");
-            string countryName = Console.ReadLine();
-            Console.WriteLine("Enter the currency name:");
-            string currencyName = Console.ReadLine();
-            Console.WriteLine("Enter the exchange rate");
-            double exchangeRate = Convert.ToDouble(Console.ReadLine());
-            Country aCountry = new Country();
-            aCountry.CountryName = countryName; 
-            aCountry.CurrencyName = currencyName;
-            aCountry.ExchangeRate = exchangeRate;
-            countrylist.Add(aCountry);
-            //countrylist.Add(new Country {CountryName = countryName, CurrencyName = currencyName, ExchangeRate = exchangeRate}); 
+            int oneORThree = 1;
+            int chkDigit = 0;
+            int total = 0, digit = 0;
+            // add your code here
+            return chkDigit;
         }
-
-        private static void DisplayMenu()
+        private static string GetCode()
         {
-            Console.WriteLine("1. Add country");
-            Console.WriteLine("2. Display all countrys");
-            Console.WriteLine("3. Find a countries exchange rate");
+            Console.Write("Enter the bar code ");
+            return Console.ReadLine();
         }
     }
 }
-
-
-

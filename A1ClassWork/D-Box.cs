@@ -1,60 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace A1ClassWork
+namespace isbn13Checkdigit
 {
-    internal class Program
+    class Program
     {
-        class Country
-        {
-            public string CountryName { get; set; }
-            public string CurrencyName { get; set; }
-            public double ExchangeRate { get; set; }
-        }
-        
         static void Main(string[] args)
         {
-            List<Country> countryList = new List<Country>();   
+            string anotherGO = "Y";
+            string theBarCode = "";
             string choice = "";
-            while (choice != "9")
+            while (anotherGO.ToUpper() == "Y")
             {
-                Console.WriteLine("1. Add a country");
-                Console.WriteLine("2. Display all countries");
+                theBarCode = GetCode();
+                Console.WriteLine("1. to add a check digit to the number ");
+                Console.WriteLine("2. to check if a number is valid (check digit is included) ");
                 choice = Console.ReadLine();
                 if (choice == "1")
                 {
-                    AddCountry(countryList);
+                    theBarCode = theBarCode + CalcCheckdigit(theBarCode);
+                    Console.WriteLine("The code with the digit added is " + theBarCode);
                 }
-                else if (choice == "2")
+                else
                 {
-                    DisplayCountries(countryList);
+                    if (ValidCode(theBarCode))
+                    {
+                        Console.WriteLine("the code enterd is VALID");
+                    }
+                    else
+                    {
+                        Console.WriteLine("the code enterd is INVALID");
+                    }
                 }
+                Console.WriteLine("Another go? (y/n)");
+                anotherGO = Console.ReadLine();
             }
         }
 
-        private static void DisplayCountries(List<Country> countryList)
+        private static bool ValidCode(string theBarCode)
         {
-            foreach (var item in countryList)
+            theBarCode = "1234";
+            string lastChar = theBarCode.Substring(theBarCode.Length -1 ,1);
+            Console.WriteLine(lastChar);
+
+            string allButLast = theBarCode.Substring(0, theBarCode.Length - 1);
+            Console.WriteLine(allButLast);
+            // get the last digit from theBarCode
+            // create a string called tempBarCode from the theBarCode that does not have the last digit (use substring)
+            // calculate the check digit for tempBarCode 
+            // compare the check digits and return true if the same otherwise false
+
+            return false;
+        }
+
+        private static int CalcCheckdigit(string theBarCode)
+        {
+            int oneORThree = 1;
+            int chkDigit = 0;
+            int total = 0, digit = 0;
+            // add your code here
+            for (int i = 0; i < theBarCode.Length; i++)
             {
-                Console.WriteLine($"{item.CountryName}   {item.CurrencyName} {item.ExchangeRate}");
+                digit = Convert.ToInt32(theBarCode[i].ToString());
+                total = total + digit * oneORThree;
+                oneORThree = (oneORThree == 1) ? 3 : 1;
+                //if (oneORThree == 1)
+                //{
+                //    oneORThree = 3;
+                //}
+                //else
+                //{
+                //    oneORThree = 1;
+                //}
             }
+            chkDigit = total % 10;
+            if (chkDigit == 0)
+            {
+                chkDigit = 0;
+            }
+            else
+            {
+                chkDigit = 10 - chkDigit;
+            }
+            return chkDigit;
         }
-
-        private static void AddCountry(List<Country> countryList)
+        private static string GetCode()
         {
-            string cName, currName;
-            double exRate;
-            Console.WriteLine("enter the country name");
-            cName = Console.ReadLine();
-            Console.WriteLine("enter the currency name");
-            currName = Console.ReadLine();
-            Console.WriteLine("enter the exchange rate");
-            exRate = Convert.ToDouble(Console.ReadLine());
-            countryList.Add(new Country { CountryName = cName, CurrencyName = currName , ExchangeRate = exRate});
+            Console.Write("Enter the bar code ");
+            return Console.ReadLine();
         }
     }
 }
