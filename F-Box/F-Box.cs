@@ -43,14 +43,16 @@ namespace isbn13Checkdigit
         private static bool ValidCode(string theBarCode)
         {
 
-            string barCode = "123456";
-            string lastCharV2 = barCode[barCode.Length - 1].ToString();
-            string lastChar = barCode.Substring(barCode.Length - 1,1);
+            string lastChar = theBarCode.Substring(theBarCode.Length - 1, 1);
+            string tempBarCode = theBarCode.Substring(0, theBarCode.Length - 1);
             // get the last digit from theBarCode
             // create a string called tempBarCode from the theBarCode that does not have the last digit (use substring)
             // calculate the check digit for tempBarCode 
             // compare the check digits and return true if the same otherwise false
-
+            if (CalcCheckdigit(tempBarCode).ToString() == lastChar)
+            {
+                return true;
+            }
             return false;
         }
 
@@ -60,6 +62,29 @@ namespace isbn13Checkdigit
             int chkDigit = 0;
             int total = 0, digit = 0;
             // add your code here
+            for (int i = 0; i < theBarCode.Length; i++)
+            {
+                digit = Convert.ToInt32(theBarCode[i].ToString());
+                total = total + digit * oneORThree;
+                //oneORThree = (oneORThree == 1) ? 3 : 1;
+                if (oneORThree == 1)
+                {
+                    oneORThree = 3;
+                }
+                else
+                {
+                    oneORThree = 1;
+                }
+            }
+            chkDigit = total % 10;
+            if (chkDigit == 0)
+            {
+                chkDigit = 0;
+            }
+            else
+            {
+                chkDigit = 10 - chkDigit;
+            }
             return chkDigit;
         }
         private static string GetCode()
