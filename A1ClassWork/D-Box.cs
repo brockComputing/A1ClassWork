@@ -42,12 +42,17 @@ namespace isbn13Checkdigit
 
         private static bool ValidCode(string theBarCode)
         {
-            theBarCode = "1234";
+            //theBarCode = "1234";
             string lastChar = theBarCode.Substring(theBarCode.Length -1 ,1);
+            string lastCharV2 = theBarCode[theBarCode.Length - 1].ToString();
             Console.WriteLine(lastChar);
 
             string allButLast = theBarCode.Substring(0, theBarCode.Length - 1);
             Console.WriteLine(allButLast);
+            if (lastChar == CalcCheckdigit(allButLast).ToString())
+            {
+                return true;
+            }
             // get the last digit from theBarCode
             // create a string called tempBarCode from the theBarCode that does not have the last digit (use substring)
             // calculate the check digit for tempBarCode 

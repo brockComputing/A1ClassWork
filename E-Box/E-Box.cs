@@ -1,96 +1,365 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// C# Skeleton Program for the AQA AS1 Summer 2020 examination
+// this code should be used in conjunction with the Preliminary Material
+// written by the AQA AS1 Programmer Team
+// developed in Visual Studio 2017
 
-namespace isbn13Checkdigit
+// Version number: 0.0.0
+
+using System;
+using System.IO;
+
+namespace AQA_Graphics_CS
 {
     class Program
     {
-        static void Main(string[] args)
+        const string EMPTY_STRING = "";
+        const int MAX_WIDTH = 100;
+        const int MAX_HEIGHT = 100;
+
+        struct FileHeader
         {
-            string anotherGO = "Y";
-            string theBarCode = "";
-            string choice = "";
-            while (anotherGO.ToUpper() == "Y")
+            public string Title;
+            public int Width;
+            public int Height;
+            public string FileType;
+        }
+
+        private static void SetHeader(ref FileHeader header)
+        {
+            header.Title = EMPTY_STRING;
+            header.Width = MAX_WIDTH;
+            header.Height = MAX_HEIGHT;
+            header.FileType = EMPTY_STRING;
+        }
+
+        private static void DisplayError(string errorMessage)
+        {
+            Console.WriteLine("Error: " + errorMessage);
+        }
+
+        private static void PrintHeading(string heading)
+        {
+            Console.WriteLine(heading);
             {
-                theBarCode = GetCode();
-                Console.WriteLine("1. to add a check digit to the number ");
-                Console.WriteLine("2. to check if a number is valid (check digit is included) ");
-                choice = Console.ReadLine();
-                if (choice == "1")
+                for (int position = 1; position <= heading.Length; position++)
                 {
-                    theBarCode = theBarCode + CalcCheckdigit(theBarCode);
-                    Console.WriteLine("The code with the digit added is " + theBarCode);
+                    Console.Write("=");
+                }
+            }
+            Console.WriteLine();
+        }
+
+        private static void DisplayImage(string[,] grid, FileHeader header)
+        {
+            Console.WriteLine();
+            PrintHeading(header.Title);
+            for (int thisRow = 0; thisRow < header.Height; thisRow++)
+            {
+                for (int thisColumn = 0; thisColumn < header.Width; thisColumn++)
+                {
+                    Console.Write(grid[thisRow, thisColumn]);
+                }
+                Console.WriteLine();
+            }
+        }
+
+        private static void SaveImage(string[,] grid, FileHeader header)
+        {
+            string answer, fileName;
+            Console.WriteLine("The current title of your image is: " + header.Title);
+            Console.Write("Do you want to use this as your filename? (Y/N) ");
+            answer = Console.ReadLine();
+            if (answer == "N" || answer == "n")
+            {
+                Console.WriteLine("Enter a new filename: ");
+                fileName = Console.ReadLine();
+            }
+            else
+            {
+                fileName = header.Title;
+            }
+            StreamWriter fileOut = new StreamWriter(fileName + ".txt");
+            fileOut.WriteLine(header.Title);
+            for (int row = 0; row < header.Height; row++)
+            {
+                for (int column = 0; column < header.Width; column++)
+                {
+                    fileOut.Write(grid[row, column]);
+                }
+                fileOut.WriteLine();
+            }
+            fileOut.Close();
+        }
+
+        private static void EditImage(string[,] grid, FileHeader header)
+        {
+            string symbol, newSymbol;
+            DisplayImage(grid, header);
+            string answer = EMPTY_STRING;
+            while (answer != "N")
+            {
+                symbol = EMPTY_STRING;
+                newSymbol = EMPTY_STRING;
+                while (symbol.Length != 1)
+                {
+                    Console.Write("Enter the symbol you want to replace: ");
+                    symbol = Console.ReadLine();
+                }
+                while (newSymbol.Length != 1)
+                {
+                    Console.Write("Enter the new symbol: ");
+                    newSymbol = Console.ReadLine();
+                }
+                for (int thisRow = 0; thisRow < header.Height; thisRow++)
+                {
+                    for (int thisColumn = 0; thisColumn < header.Width; thisColumn++)
+                    {
+                        if (grid[thisRow, thisColumn] == symbol)
+                        {
+                            grid[thisRow, thisColumn] = newSymbol;
+                        }
+                    }
+                }
+                DisplayImage(grid, header);
+                Console.Write("Do you want to make any further changes? (Y/N) ");
+                answer = Console.ReadLine();
+            }
+        }
+
+        private static string ConvertChar(int pixelValue)
+        {
+            string asciiChar = "";
+            if (pixelValue <= 32)
+            {
+                asciiChar = "#";
+            }
+            else if (pixelValue <= 64)
+            {
+                asciiChar = "&";
+            }
+            else if (pixelValue <= 96)
+            {
+                asciiChar = "+";
+            }
+            else if (pixelValue <= 128)
+            {
+                asciiChar = ";";
+            }
+            else if (pixelValue <= 160)
+            {
+                asciiChar = ":";
+            }
+            else if (pixelValue <= 192)
+            {
+                asciiChar = ",";
+            }
+            else if (pixelValue <= 224)
+            {
+                asciiChar = ".";
+            }
+            else
+            {
+                asciiChar = " ";
+            }
+            return asciiChar;
+        }
+
+        private static void LoadGreyScaleImage(StreamReader fileIn, string[,] grid, FileHeader header)
+        {
+            string nextPixel;
+            int pixelValue;
+            try
+            {
+                for (int row = 0; row < header.Height; row++)
+                {
+                    for (int column = 0; column < header.Width; column++)
+                    {
+                        nextPixel = fileIn.ReadLine();
+                        pixelValue = Convert.ToInt32(nextPixel);
+                        grid[row, column] = ConvertChar(pixelValue);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                DisplayError("Image data error");
+            }
+        }
+
+        private static void LoadAsciiImage(StreamReader fileIn, string[,] grid, FileHeader header)
+        {
+            string imageData = fileIn.ReadLine();
+            int nextChar = 0;
+            try
+            {
+                for (int row = 0; row < header.Height; row++)
+                {
+                    for (int column = 0; column < header.Width; column++)
+                    {
+                        grid[row, column] = imageData[nextChar].ToString();
+                        nextChar += 1;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                DisplayError("Image data error");
+            }
+        }
+
+        private static void LoadFile(string[,] grid, ref FileHeader header)
+        {
+            bool fileFound = false;
+            bool fileTypeOK = false;
+            string fileName, headerLine;
+            Console.Write("Enter filename to load: ");
+            fileName = Console.ReadLine();
+            try
+            {
+                StreamReader fileIn = new StreamReader(fileName + ".txt");
+                fileFound = true;
+                headerLine = fileIn.ReadLine();
+                string[] fields = headerLine.Split(',');
+                header.Title = fields[0];
+                header.Width = Convert.ToInt32(fields[1]);
+                header.Height = Convert.ToInt32(fields[2]);
+                header.FileType = fields[3];
+                header.FileType = header.FileType[0].ToString();
+                if (header.FileType == "A")
+                {
+                    LoadAsciiImage(fileIn, grid, header);
+                    fileTypeOK = true;
+                }
+                else if (header.FileType == "G")
+                {
+                    LoadGreyScaleImage(fileIn, grid, header);
+                    fileTypeOK = true;
+                }
+                fileIn.Close();
+                if (!fileTypeOK)
+                {
+                    DisplayError("Unknown file type");
                 }
                 else
                 {
-                    if (ValidCode(theBarCode))
-                    {
-                        Console.WriteLine("the code enterd is VALID");
-                    }
-                    else
-                    {
-                        Console.WriteLine("the code enterd is INVALID");
-                    }
+                    DisplayImage(grid, header);
                 }
-                Console.WriteLine("Another go? (y/n)");
-                anotherGO = Console.ReadLine();
+            }
+            catch (Exception)
+            {
+                if (!fileFound)
+                {
+                    DisplayError("File not found");
+                }
+                else
+                {
+                    DisplayError("Unknown error");
+                }
             }
         }
 
-        private static bool ValidCode(string theBarCode)
+        private static void SaveFile(string[,] grid, FileHeader header)
         {
-            // get the last digit from theBarCode
-            //theBarCode = "1258";
-            string lastDigit = theBarCode.Substring(theBarCode.Length - 1,1);
-            string theRestOftheDigits = theBarCode.Substring(0,theBarCode.Length - 1);
-            if (CalcCheckdigit(theRestOftheDigits).ToString() == lastDigit)
+            string fileName;
+            Console.Write("Enter filename: ");
+            fileName = Console.ReadLine();
+            StreamWriter fileOut = new StreamWriter(fileName + ".txt");
+            fileOut.WriteLine(header.Title + "," + header.Width + "," + header.Height + "," + "A");
+            for (int row = 0; row < header.Height; row++)
             {
-                return true;
+                for (int column = 0; column < header.Width; column++)
+                {
+                    fileOut.Write(grid[row, column]);
+                }
             }
-            else
+            fileOut.Close();
+        }
+
+        private static void ClearGrid(string[,] grid)
+        {
+            for (int row = 0; row < MAX_HEIGHT; row++)
             {
-                return false;   
+                for (int column = 0; column < MAX_WIDTH; column++)
+                {
+                    grid[row, column] = ".";
+                }
             }
         }
 
-        private static int CalcCheckdigit(string theBarCode)
+        private static void DisplayMenu()
         {
-            int oneORThree = 1;
-            int chkDigit = 0;
-            int total = 0, digit = 0;
-            // add your code here
-            for (int i = 0; i < theBarCode.Length; i++)
-            {
-                digit = Convert.ToInt32(theBarCode[i].ToString());
-                total = total + digit * oneORThree;
-                oneORThree = (oneORThree == 1) ? 3 : 1;
-                //if (oneORThree == 1)
-                //{
-                //    oneORThree = 3;
-                //}
-                //else
-                //{
-                //    oneORThree = 1;
-                //}
-            }
-            chkDigit = total % 10;
-            if (chkDigit == 0)
-            {
-                chkDigit = 0;
-            }
-            else
-            {
-                chkDigit = 10 - chkDigit;
-            }
-            return chkDigit;
+            Console.WriteLine();
+            Console.WriteLine("Main Menu");
+            Console.WriteLine("=========");
+            Console.WriteLine("L - Load graphics file");
+            Console.WriteLine("D - Display image");
+            Console.WriteLine("E - Edit image");
+            Console.WriteLine("S - Save image");
+            Console.WriteLine("X - Exit program");
+            Console.WriteLine();
         }
-        private static string GetCode()
+
+        private static char GetMenuOption()
         {
-            Console.Write("Enter the bar code ");
-            return Console.ReadLine();
+            string menuOption = EMPTY_STRING;
+            while (menuOption.Length != 1)
+            {
+                Console.Write("Enter your choice: ");
+                menuOption = Console.ReadLine();
+            }
+            return menuOption[0];
+        }
+
+        private static void Graphics()
+        {
+            string[,] grid = new string[MAX_HEIGHT, MAX_WIDTH];
+            ClearGrid(grid);
+            FileHeader header = new FileHeader();
+            SetHeader(ref header);
+            bool programEnd = false;
+            char menuOption;
+            char answer;
+            while (!programEnd)
+            {
+                DisplayMenu();
+                menuOption = GetMenuOption();
+                if (menuOption == 'L')
+                {
+                    LoadFile(grid, ref header);
+                }
+                else if (menuOption == 'D')
+                {
+                    DisplayImage(grid, header);
+                }
+                else if (menuOption == 'E')
+                {
+                    EditImage(grid, header);
+                }
+                else if (menuOption == 'S')
+                {
+                    SaveImage(grid, header);
+                }
+                else if (menuOption == 'X')
+                {
+                    programEnd = true;
+                }
+                else
+                {
+                    Console.WriteLine("You did not choose a valid menu option. Try again");
+                }
+            }
+            Console.WriteLine("You have chosen to exit the program");
+            Console.Write("Do you want to save the image as a graphics file? (Y/N) ");
+            answer = Convert.ToChar(Console.ReadLine());
+            if (answer == 'Y' || answer == 'y')
+            {
+                SaveFile(grid, header);
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Graphics();
         }
     }
 }
