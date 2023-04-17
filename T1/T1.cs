@@ -295,7 +295,6 @@ namespace AQA_Graphics_CS
             Console.WriteLine("D - Display image");
             Console.WriteLine("E - Edit image");
             Console.WriteLine("S - Save image");
-            Console.WriteLine("C - Convert Image");
             Console.WriteLine("X - Exit program");
             Console.WriteLine();
         }
@@ -340,10 +339,6 @@ namespace AQA_Graphics_CS
                 {
                     SaveImage(grid, header);
                 }
-                else if (menuOption == 'C')
-                {
-                    ConvertFileFormat();
-                }
                 else if (menuOption == 'X')
                 {
                     programEnd = true;
@@ -360,38 +355,6 @@ namespace AQA_Graphics_CS
             {
                 SaveFile(grid, header);
             }
-        }
-
-        private static void ConvertFileFormat()
-        {
-            // get the file name to convert
-            Console.WriteLine("Enter the file name");
-            string fileName = Console.ReadLine();
-            StreamReader currentFile = new StreamReader($"{fileName}.txt");
-            // read the first line to get the title
-            string title = currentFile.ReadLine();
-            string secondLine = "";
-            int width = 0;
-            int rows = 0;
-            while (!currentFile.EndOfStream)
-            {
-                //   read line of text
-                string lineOfText = currentFile.ReadLine();
-                //   the the text to a string
-                secondLine = secondLine + lineOfText;
-                width = lineOfText.Length;
-                //   add one the number of rows
-                rows++;
-            }
-            title = title + $",{width},{rows},A";
-            Console.WriteLine(title);
-            Console.WriteLine(secondLine);
-            //Write the two lines to a new file
-            currentFile.Close();
-            StreamWriter outFile = new StreamWriter("convert.txt");
-            outFile.WriteLine(title);
-            outFile.WriteLine(secondLine);
-            outFile.Close();
         }
 
         static void Main(string[] args)

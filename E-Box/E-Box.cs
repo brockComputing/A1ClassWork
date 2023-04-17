@@ -295,6 +295,7 @@ namespace AQA_Graphics_CS
             Console.WriteLine("D - Display image");
             Console.WriteLine("E - Edit image");
             Console.WriteLine("S - Save image");
+            Console.WriteLine("C - Compress Image");
             Console.WriteLine("X - Exit program");
             Console.WriteLine();
         }
@@ -343,6 +344,10 @@ namespace AQA_Graphics_CS
                 {
                     programEnd = true;
                 }
+                else if (menuOption == 'C')
+                {
+                    CompressImage();
+                }
                 else
                 {
                     Console.WriteLine("You did not choose a valid menu option. Try again");
@@ -355,6 +360,88 @@ namespace AQA_Graphics_CS
             {
                 SaveFile(grid, header);
             }
+        }
+        private static void UnCompressImage()
+        {
+            Console.WriteLine("Enter the filename of the file to uncompress, it must be compressed the file will be called uncompress.txt");
+            string fileName = Console.ReadLine();
+            StreamReader fileIn = new StreamReader(fileName + ".txt");
+            StreamWriter fileOut = new StreamWriter("uncompress.txt");
+            string newContents = fileIn.ReadLine(); // reads the header into newContents
+            fileOut.WriteLine(newContents);
+            newContents = "";
+            string theContents = fileIn.ReadLine();
+            int count = 0;
+            string strCount = "";
+            string currentchar = "";
+            bool readCharState = true;
+            // @434 char followed by a number
+            for (int i = 0; i < theContents.Length; i++)
+            {
+                if (readCharState)
+                {
+                    currentchar = theContents[i].ToString();
+                    readCharState = false;
+                }
+                else // reading numbers
+                {
+                    if ((int)theContents[i] >= 48 && (int)theContents[i] <= 57) // is a digit
+                    {
+                        strCount += theContents[i].ToString();
+                    }
+                    else
+                    {
+                        readCharState = true;
+                        count = Convert.ToInt32(strCount);
+                        // write out to file
+                        for (int j = 0; j < count; j++)
+                        {
+                            newContents += currentchar;
+                        }
+                        strCount = "";
+                        // current char at i is letter so go back one 
+                        i--;
+                    }
+                }
+            }
+            fileOut.WriteLine(newContents);
+            fileOut.Close();
+            fileIn.Close();
+
+        }
+
+        private static void CompressImage()
+        {
+            Console.WriteLine("Enter the filename of the file to compress, it must be of the saved format not the display format");
+            string filename = Console.ReadLine();
+            StreamReader fileIn = new StreamReader(filename + ".txt");
+            StreamWriter fileOut = new StreamWriter("compress.txt");
+            string newContents = fileIn.ReadLine();
+            fileOut.WriteLine(newContents);
+            newContents = "";
+            string theContents = fileIn.ReadLine();
+            int countOfChar = 0;
+            string currentChar = "";
+            string OldChar = theContents.Substring(0, 1);
+            for (int i = 0; i < theContents.Length; i++)
+            {
+                currentChar = theContents.Substring(i, 1);
+                if (OldChar == currentChar)
+                {
+                    countOfChar++;
+                }
+                else
+                {
+                    newContents = newContents + OldChar + countOfChar;
+                    countOfChar = 1;
+                }
+                OldChar = currentChar;
+            }
+            newContents = newContents + OldChar + countOfChar;
+            fileOut.WriteLine(newContents);
+            fileIn.Close();
+            fileOut.Close();
+
         }
 
         static void Main(string[] args)
