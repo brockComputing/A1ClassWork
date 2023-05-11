@@ -296,7 +296,7 @@ namespace AQA_Graphics_CS
             Console.WriteLine("E - Edit image");
             Console.WriteLine("S - Save image");
             Console.WriteLine("X - Exit program");
-            Console.WriteLine("R - Resize image");
+            Console.WriteLine("R - Reflect");
             Console.WriteLine();
         }
 
@@ -346,7 +346,9 @@ namespace AQA_Graphics_CS
                 }
                 else if (menuOption == 'R' || menuOption == 'r')
                 {
-                    ReSizeImage(grid, ref header);
+                    //ReflectImage(grid, header);
+                    ReflectImageEasy(grid, header);
+                    DisplayImage(grid, header); 
                 }
                 else
                 {
@@ -361,24 +363,39 @@ namespace AQA_Graphics_CS
                 SaveFile(grid, header);
             }
         }
-
-        private static void ReSizeImage(string[,] grid, ref FileHeader header)
+        private static void ReflectImageEasy(string[,] grid, FileHeader header)
         {
-            int scaleAmount = 2; // double size you can ask the user if you want.
-            FileHeader newFileHeader = new FileHeader();    
-            newFileHeader.Width = header.Width * scaleAmount;
-            newFileHeader.Height = header.Height * scaleAmount;
-            newFileHeader.Title = header.Title; 
-            string[,] newGrid = new string[newFileHeader.Height, newFileHeader.Width];
-            for (int thisRow = 0; thisRow < newFileHeader.Height; thisRow++)
-            {
-                for (int thisColumn = 0; thisColumn < newFileHeader.Width; thisColumn++)
+            // this modifys grid this is harder than displaying 
+            string currentLine = "";
+            for (int row = 0; row < header.Height; row++)
+            {   
+                for (int col = header.Width - 1; col >= 0; col--)
                 {
-                    newGrid[thisRow, thisColumn] = grid[thisRow / 2, thisColumn / 2];
+                    Console.Write(grid[row,col]);
                 }
                 Console.WriteLine();
             }
-            DisplayImage(newGrid, newFileHeader);
+        }
+        private static void ReflectImage(string[,] grid, FileHeader header)
+        {
+            // this modifys grid this is harder than displaying 
+            string currentLine = "";
+            for (int row = 0; row < header.Height; row++)
+            {
+                // write the row to the string currentLine
+                currentLine = "";
+                for (int col = 0; col < header.Width; col++)
+                {
+                    currentLine += grid[row, col];
+                }
+                int theWidth = header.Width;
+                // write the string currentLine to the row in reverse
+                for (int col = 0; col < header.Width; col++)
+                {
+                    grid[row, col] = currentLine[theWidth - 1].ToString();
+                    theWidth--;
+                }
+            }
         }
 
         static void Main(string[] args)

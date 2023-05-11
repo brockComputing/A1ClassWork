@@ -295,8 +295,8 @@ namespace AQA_Graphics_CS
             Console.WriteLine("D - Display image");
             Console.WriteLine("E - Edit image");
             Console.WriteLine("S - Save image");
-            Console.WriteLine("C - Convert Image");
             Console.WriteLine("X - Exit program");
+            Console.WriteLine("R - Reflect");
             Console.WriteLine();
         }
 
@@ -340,13 +340,14 @@ namespace AQA_Graphics_CS
                 {
                     SaveImage(grid, header);
                 }
-                else if (menuOption == 'C')
-                {
-                    ConvertFileFormat();
-                }
                 else if (menuOption == 'X')
                 {
                     programEnd = true;
+                }
+                else if (menuOption == 'R' || menuOption == 'r')
+                {
+                   // ReflectImageEasy(grid, header);
+                    ReflectImage(grid, header);
                 }
                 else
                 {
@@ -362,36 +363,40 @@ namespace AQA_Graphics_CS
             }
         }
 
-        private static void ConvertFileFormat()
+        private static void ReflectImageEasy(string[,] grid, FileHeader header)
         {
-            // get the file name to convert
-            Console.WriteLine("Enter the file name");
-            string fileName = Console.ReadLine();
-            StreamReader currentFile = new StreamReader($"{fileName}.txt");
-            // read the first line to get the title
-            string title = currentFile.ReadLine();
-            string secondLine = "";
-            int width = 0;
-            int rows = 0;
-            while (!currentFile.EndOfStream)
+            // display the image reflected
+            Console.WriteLine();
+            PrintHeading(header.Title);
+            for (int thisRow = 0; thisRow < header.Height; thisRow++)
             {
-                //   read line of text
-                string lineOfText = currentFile.ReadLine();
-                //   the the text to a string
-                secondLine = secondLine + lineOfText;
-                width = lineOfText.Length;
-                //   add one the number of rows
-                rows++;
+                for (int thisColumn = header.Width - 1; thisColumn >=0; thisColumn--)
+                {
+                    Console.Write(grid[thisRow, thisColumn]);
+                }
+                Console.WriteLine();
             }
-            title = title + $",{width},{rows},A";
-            Console.WriteLine(title);
-            Console.WriteLine(secondLine);
-            //Write the two lines to a new file
-            currentFile.Close();
-            StreamWriter outFile = new StreamWriter("convert.txt");
-            outFile.WriteLine(title);
-            outFile.WriteLine(secondLine);
-            outFile.Close();
+        }
+
+        private static void ReflectImage(string[,] grid, FileHeader header)
+        {
+            // change grid.
+            string line = "";
+            for (int thisRow = 0; thisRow < header.Height; thisRow++)
+            {
+                line = "";
+                for (int thisColumn = 0; thisColumn < header.Width; thisColumn++)
+                {
+                    line += grid[thisRow, thisColumn];
+                }
+                int count = 0;
+                for (int thisColumn = header.Width - 1; thisColumn >= 0; thisColumn--)
+                {
+                    grid[thisRow, thisColumn] = line[count].ToString();
+                    count++;
+                }
+            }
+
         }
 
         static void Main(string[] args)
